@@ -62,9 +62,9 @@ class AddEmployeeView(APIView):
         if token is None or token == "null" or token.strip() == "":
             raise exceptions.AuthenticationFailed('Authorization Header or Token is missing on Request Headers')
         decoded=jwt.decode(token.strip(),settings.JWT_AUTH['JWT_SECRET_KEY'])
-        managerOBJ=Manager.objects.get(id=decoded['user_id'])
+        manager_Obj=Manager.objects.get(id=decoded['user_id'])
         employee_detail={
-            "manager":managerOBJ.id,
+            "manager":manager_Obj.id,
             "firstName":request.data['firstName'],
             "lastName": request.data['lastName'],
             "email": request.data['email'],
@@ -72,7 +72,7 @@ class AddEmployeeView(APIView):
         }
         serializer=EmployeeSerializer(data=employee_detail,many=False)
         if serializer.is_valid(raise_exception=True):
-            save_employee=serializer.save()
+            serializer.save()
         return Response({
             "status":201,
             "message":"Employee Created Successfully",
