@@ -16,11 +16,11 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 urlpatterns=[
-    path('doc/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('register/',ManagerSignupView.as_view()),
-    path('login/',ManagerLoginView.as_view()),
-    path('getEmployees/',EmployeeListView.as_view()),
-    path('addEmployee/',AddEmployeeView.as_view()),
-    path('updateEmployee/',UpdateEmployeeView.as_view()),
-    path('deleteEmployee/<str:pk>/', DeleteEmployeeView.as_view())
+    path('doc/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'), # Swagger Documentation URL
+    path('register/',ManagerSignupView.as_view()), # Manager Login URL
+    path('login/',ManagerLoginView.as_view()), # Manager Registeration URL
+    path('getEmployees/',EmployeeListView.as_view()), # Employee get list URL
+    path('addEmployee/',AddEmployeeView.as_view()), # Employee Add URL
+    path('updateEmployee/',UpdateEmployeeView.as_view()), # Employee Update URL
+    path('deleteEmployee/<str:pk>/', DeleteEmployeeView.as_view()) #Employee Delete URL
 ]

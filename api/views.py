@@ -9,6 +9,7 @@ from django.conf import settings
 from .models import Manager,Employee
 from .serializers import EmployeeSerializer,ManagerSignUpSerializer,ManagerLoginSerializer
 
+# Manager SIGNUP API view
 class ManagerSignupView(APIView):
     permission_classes = (AllowAny,)
     def post(self,request):
@@ -20,6 +21,7 @@ class ManagerSignupView(APIView):
             "message":"Successfully Registered",
         },status=status.HTTP_201_CREATED)
 
+# Manager LOGIN API view
 class ManagerLoginView(APIView):
     permission_classes = (AllowAny,)
 
@@ -32,12 +34,15 @@ class ManagerLoginView(APIView):
             "token":serializer.data['token']
         },status=status.HTTP_200_OK)
 
+# Employee GetList API View
 class EmployeeListView(APIView):
+    #JWT Token Authentication Class
     permission_classes = (IsAuthenticated,)
     authentication_class =  JSONWebTokenAuthentication
 
     def get(self,request):
         try:
+            # JWT Token Authentication
             token = get_authorization_header(request).decode('UTF-8').split('Bearer')[1]
             if token is None or token == "null" or token.strip() == "":
                 raise exceptions.AuthenticationFailed('Authorization Header or Token is missing on Request Headers')
@@ -54,9 +59,12 @@ class EmployeeListView(APIView):
                 "status": 404,
             }, status=status.HTTP_404_NOT_FOUND)
 
+# Add Employee APIView
 class AddEmployeeView(APIView):
+    #JWT Token Authentication Class
     permission_classes = (IsAuthenticated,)
     authentication_class = JSONWebTokenAuthentication
+
     def post(self,request):
         token=get_authorization_header(request).decode('UTF-8').split('Bearer')[1]
         if token is None or token == "null" or token.strip() == "":
@@ -68,7 +76,12 @@ class AddEmployeeView(APIView):
             "firstName":request.data['firstName'],
             "lastName": request.data['lastName'],
             "email": request.data['email'],
-            "phone_number": request.data['phone_number']
+            "mobile": request.data['mobile'],
+            "password":request.data['password'],
+            "address":request.data['address'],
+            "dob":request.data['dob'],
+            "company":request.data['company'],
+            "city":request.data['city'],
         }
         serializer=EmployeeSerializer(data=employee_detail,many=False)
         if serializer.is_valid(raise_exception=True):
@@ -79,9 +92,12 @@ class AddEmployeeView(APIView):
             "data":serializer.data
         },status=status.HTTP_201_CREATED)
 
+# Update Employee APIView
 class UpdateEmployeeView(APIView):
+    #JWT Token Authentication Class
     permission_classes = (IsAuthenticated,)
     authentication_class = JSONWebTokenAuthentication
+
     def patch(self,request):
         token = get_authorization_header(request).decode('UTF-8').split('Bearer')[1]
         if token is None or token == "null" or token.strip() == "":
@@ -100,7 +116,9 @@ class UpdateEmployeeView(APIView):
         except:
             return Response({"message":"Not Found"},status=status.HTTP_400_BAD_REQUEST)
 
+#Delete Employee APIView
 class DeleteEmployeeView(APIView):
+    #JWT Token Authentication Class
     permission_classes = (IsAuthenticated,)
     authentication_class = JSONWebTokenAuthentication
     def delete(self,request,pk,format=None):

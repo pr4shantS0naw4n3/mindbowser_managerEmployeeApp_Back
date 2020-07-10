@@ -9,12 +9,12 @@ from .models import Manager,Employee
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model=Employee
-        fields=('id','firstName','lastName','email','phone_number','manager')
+        fields=('id','firstName','lastName','email','mobile','manager','password','address','dob','company','city')
 
 class ManagerSignUpSerializer(serializers.ModelSerializer):
     class Meta:
         model=Manager
-        fields=('name','email','password')
+        fields=('email','password','firstName','lastName','address','dob','company')
         extra_kwargs={'password':{'write_only':True}}
 
     def create(self, validated_data):
@@ -38,9 +38,10 @@ class ManagerLoginSerializer(serializers.Serializer):
             raise serializers.ValidationError(
                 'Invalid Credentials'
             )
-
         try:
+            # JWT TPayload Generation
             payload=JWT_PAYLOAD_HANDLER(user)
+            # JWT Token Generation
             jwt_token=JWT_ENCODE_HANDLER(payload)
             update_last_login(None,user)
         except:

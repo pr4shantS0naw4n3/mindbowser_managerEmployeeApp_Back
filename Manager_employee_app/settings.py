@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'Manager_employee_app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': "manager_employee",
+        'NAME': "manager_employee_db",
         'USER': 'root',
         'PASSWORD': 'root',
         'HOST': 'localhost',

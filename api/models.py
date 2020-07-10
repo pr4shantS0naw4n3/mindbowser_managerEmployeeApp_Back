@@ -3,15 +3,19 @@ from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 
 
+# Extending the existing UserClass to create a custom User
 class UserManager(BaseUserManager):
 
-    def create_user(self, email, name,password=None,):
+    def create_user(self, email, firstName, lastName, company, dob, password=None, ):
         if not email:
             raise ValueError('Users Must Have an email address')
 
         user = self.model(
             email=self.normalize_email(email),
-            name=name
+            firstName=firstName,
+            lastName=lastName,
+            company=company,
+            dob=dob
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -30,15 +34,18 @@ class UserManager(BaseUserManager):
 
 
 class Manager(AbstractBaseUser):
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(
         verbose_name='email address',
         max_length=255,
         unique=True,
         blank=False
-        )
-    name=models.CharField(max_length=255,blank=False,default="null")
+    )
+    firstName = models.CharField(max_length=255, blank=False, default="null")
+    lastName = models.CharField(max_length=255, blank=False, default="null")
+    address = models.CharField(max_length=255, blank=False, default="null")
+    dob = models.DateField(blank=False)
+    company = models.CharField(max_length=255, blank=False, default="null")
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
@@ -53,14 +60,19 @@ class Manager(AbstractBaseUser):
         db_table = "Manager"
 
 
-
+# Employee Models
 class Employee(models.Model):
-    id=models.UUIDField(default=uuid.uuid4,primary_key=True,editable=False)
-    firstName=models.CharField(max_length=255,blank=False)
-    lastName = models.CharField(max_length=255, blank=False)
-    email=models.EmailField(blank=False,unique=True,max_length=255)
-    phone_number=models.CharField(max_length=10,blank=False)
-    manager=models.ForeignKey(Manager,on_delete=models.CASCADE)
-    class Meta:
-        db_table='Employee'
+    id = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    firstName = models.CharField(max_length=255, blank=False, default="null")
+    lastName = models.CharField(max_length=255, blank=False, default="null")
+    email = models.EmailField(blank=False, unique=True, max_length=255)
+    password = models.CharField(max_length=255, blank=False, default="null")
+    mobile = models.CharField(max_length=10, blank=False, default="null")
+    address = models.CharField(max_length=255, blank=False, default="null")
+    dob = models.DateField(blank=False)
+    company = models.CharField(max_length=128, blank=False, default="null")
+    city = models.CharField(max_length=30, blank=False, default="null")
+    manager = models.ForeignKey(Manager, on_delete=models.CASCADE)
 
+    class Meta:
+        db_table = 'Employee'
