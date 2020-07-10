@@ -1,4 +1,6 @@
 # Mindbowser Manager Employee Management Application - BACKEND
+
+# Python, Django, Mysql
 The Manager and Employee assignment with JWT implementation,swagger and pagination for list details.
 
 Backend
