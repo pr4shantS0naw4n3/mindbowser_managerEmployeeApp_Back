@@ -1,0 +1,66 @@
+import uuid
+from django.db import models
+from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+
+
+class UserManager(BaseUserManager):
+
+    def create_user(self, email, name,password=None,):
+        if not email:
+            raise ValueError('Users Must Have an email address')
+
+        user = self.model(
+            email=self.normalize_email(email),
+            name=name
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, password):
+        if password is None:
+            raise TypeError('Superusers must have a password.')
+
+        user = self.create_user(email, password)
+        user.is_superuser = True
+        user.is_staff = True
+        user.save()
+
+        return user
+
+
+class Manager(AbstractBaseUser):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    email = models.EmailField(
+        verbose_name='email address',
+        max_length=255,
+        unique=True,
+        blank=False
+        )
+    name=models.CharField(max_length=255,blank=False,default="null")
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+    objects = UserManager()
+
+    def __str__(self):
+        return self.email
+
+    class Meta:
+        db_table = "Manager"
+
+
+
+class Employee(models.Model):
+    id=models.UUIDField(default=uuid.uuid4,primary_key=True,editable=False)
+    firstName=models.CharField(max_length=255,blank=False)
+    lastName = models.CharField(max_length=255, blank=False)
+    email=models.EmailField(blank=False,unique=True,max_length=255)
+    phone_number=models.CharField(max_length=10,blank=False)
+    manager=models.ForeignKey(Manager,on_delete=models.CASCADE)
+    class Meta:
+        db_table='Employee'
+
